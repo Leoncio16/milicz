@@ -1,0 +1,1 @@
+Type: PokéStop, Name: test, Lat: 51.51660034800902, Lng: 17.268122925543906
