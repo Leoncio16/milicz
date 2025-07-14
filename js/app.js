@@ -84,14 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * Load points from server
      */
     function loadPointsFromServer() {
-        fetch('/api/points')
-            .then(response => response.json())
-            .then(points => {
-                pokeMap.loadPoints(points);
-            })
-            .catch(error => {
-                console.error('Error loading points:', error);
-            });
+        db.collection("points").get().then(snapshot => {
+            const points = [];
+            snapshot.forEach(doc => points.push(doc.data()));
+            pokeMap.loadPoints(points);
+        }).catch(error => {
+            console.error('Error loading points:', error);
+        });
     }
     
     /**
@@ -99,19 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Object} point - Point data
      */
     function savePoint(point) {
-        fetch('/api/points', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(point)
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log('Point saved:', result);
-        })
-        .catch(error => {
-            console.error('Error saving point:', error);
-        });
+        db.collection("points").add(point)
+            .then(() => {
+                console.log("Point saved!");
+            })
+            .catch(error => {
+                console.error("Error saving point:", error);
+            });
     }
 });

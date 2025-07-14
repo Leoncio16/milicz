@@ -6,6 +6,23 @@
     <title>Milicz County Pokémon GO Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/style.css">
+    <!-- Firebase App (core) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyA2qXhSqVqlLwjq5Ww4_SbB7XeBI_ZrH2k",
+        authDomain: "mapa-44587.firebaseapp.com",
+        projectId: "mapa-44587",
+        storageBucket: "mapa-44587.firebasestorage.app",
+        messagingSenderId: "86974012018",
+        appId: "1:86974012018:web:64655d7077d3da625880eb",
+        measurementId: "G-3G8SWH4VBC"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
 </head>
 <body>
     <div class="container">
