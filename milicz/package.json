@@ -1,0 +1,18 @@
+{
+  "name": "milicz-pokemon-go-map",
+  "version": "1.0.0",
+  "description": "Interactive map for managing PokéStop and Gym locations in Milicz County",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@raha.group/s2-geometry": "github:rahatool/s2-geometry",
+    "express": "^4.18.2",
+    "s2-geometry": "^1.2.10"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
