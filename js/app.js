@@ -86,12 +86,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadPointsFromServer() {
         db.collection("points").get().then(snapshot => {
             const points = [];
-            snapshot.forEach(doc => points.push(doc.data()));
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                data._id = doc.id; // zapisz id dokumentu
+                points.push(data);
+            });
             pokeMap.loadPoints(points);
         }).catch(error => {
             console.error('Error loading points:', error);
         });
     }
+
+    // Obsługa usuwania punktu po otwarciu popupu
+    pokeMap.map.on('popupopen', function(e) {
+        const btn = e.popup._contentNode.querySelector('.delete-point-btn');
+        if (btn) {
+            btn.onclick = function() {
+                const id = btn.getAttribute('data-id');
+                if (confirm('Na pewno usunąć ten punkt?')) {
+                    db.collection('points').doc(id).delete().then(() => {
+                        loadPointsFromServer();
+                    });
+                }
+            };
+        }
+    });
     
     /**
      * Save point to server

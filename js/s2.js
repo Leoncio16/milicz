@@ -37,7 +37,28 @@ class S2Utility {
         return Array.from(cells.values());
     }
 
-    // Tworzy warstwę tylko raz
+    // Dodaję funkcję do liczenia punktów w komórkach S2
+    countPointsInCells(points, level) {
+        const cellCounts = {};
+        points.forEach(point => {
+            const cell = S2.S2Cell.FromLatLng(S2.L.LatLng(point.lat, point.lng), level);
+            const cellId = cell.toHilbertQuadkey();
+            if (!cellCounts[cellId]) cellCounts[cellId] = [];
+            cellCounts[cellId].push(point);
+        });
+        return cellCounts;
+    }
+
+    // Funkcja do generowania porady dla komórki level 14
+    getAdviceForCell14(pokestopCount) {
+        if (pokestopCount <= 1) return '0 gymów (za mało PokéStopów)';
+        if (pokestopCount <= 5) return '1 gym (2-5 PokéStopów)';
+        if (pokestopCount <= 19) return '2 gymy (6-19 PokéStopów)';
+        if (pokestopCount <= 34) return '3 gymy (20-34 PokéStopów)';
+        return '4 gymy (35+ PokéStopów)';
+    }
+
+    // Funkcja do generowania popupów dla komórek S2
     createS2CellLayers(map) {
         if (!this.level14Cells.length) {
             this.level14Cells = this.generateS2CellsForMilicz(14);

@@ -87,7 +87,11 @@ class PokeMap {
             title: point.name
         }).addTo(this.map);
         
-        marker.bindPopup(`<strong>${point.name}</strong><br>Type: ${point.type}`);
+        let popupHtml = `<strong>${point.name}</strong><br>Type: ${point.type}`;
+        if (point._id) {
+            popupHtml += `<br><button class="delete-point-btn" data-id="${point._id}">Usuń</button>`;
+        }
+        marker.bindPopup(popupHtml);
         
         this.markers.push({
             marker: marker,
