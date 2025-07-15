@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milicz County Pokémon GO Map</title>
+    <title>Milicz Pokémon GO Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/style.css">
     <!-- Firebase App (core) -->
@@ -23,6 +23,8 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
     </script>
+    <script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -52,6 +54,70 @@
                     <button type="submit" id="add-point-btn">Add Point</button>
                 </form>
                 
+                <button id="open-locate-map-btn" style="margin-top:10px;">Otwórz mapkę do lokalizacji</button>
+                <div id="locate-map-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                  <div style="background:#fff; padding:20px; border-radius:8px; max-width:90vw; max-height:90vh; position:relative;">
+                    <button id="close-locate-map-btn" style="position:absolute; top:10px; right:10px;">Zamknij</button>
+                    <h3>Wskaż swoją lokalizację</h3>
+                    <button id="locate-me-btn" style="margin-bottom:10px;">Moja pozycja</button>
+                    <div id="locate-map" style="width:400px; height:400px;"></div>
+                    <div style="margin-top:10px;">
+                      <label for="user-coords">Twoje koordynaty:</label>
+                      <input type="text" id="user-coords" readonly style="width:250px;">
+                      <button id="copy-coords-btn">Kopiuj</button>
+                    </div>
+                  </div>
+                </div>
+
+                <button id="show-points-btn" style="margin-top:20px;">Pokaż listę punktów</button>
+                <div id="points-json-actions" style="display:none; margin-top:10px;">
+                  <button id="download-json-btn">Pobierz JSON</button>
+                  <button id="copy-json-btn">Kopiuj JSON</button>
+                  <button id="download-pdf-btn">Pobierz mapę PDF</button>
+                </div>
+                <div id="points-list" style="display:none; margin-top:10px;"></div>
+                
+                <!-- Narzędzie do planowania trasy -->
+                <div class="form-container" id="route-planner-container" style="margin-top:24px;">
+                  <h2>Planowanie trasy</h2>
+                  <form id="route-planner-form">
+                    <div class="form-group">
+                      <label for="route-start">Wybierz punkt startowy:</label>
+                      <select id="route-start" required>
+                        <option value="">Wczytywanie...</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="route-focus">Na czym chcesz się skupić?</label>
+                      <select id="route-focus" required>
+                        <option value="pokestop">Jak najwięcej PokéStopów (przedmioty)</option>
+                        <option value="gym">Jak najwięcej Gymów (rajdów)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="route-length">Długość trasy (km):</label>
+                      <input type="number" id="route-length" min="0.5" max="20" step="0.1" value="2" required>
+                    </div>
+                    <button type="submit" id="plan-route-btn">Zaplanuj trasę</button>
+                  </form>
+                </div>
+
+                <!-- Modal z linkiem i opisem trasy -->
+                <div id="route-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(53,88,160,0.10); z-index:2000; align-items:center; justify-content:center;">
+                  <div style="background:#fff; padding:20px; border-radius:18px; max-width:95vw; max-height:95vh; position:relative; overflow-y:auto;">
+                    <button id="close-route-modal-btn" style="position:absolute; top:10px; right:10px;">Zamknij</button>
+                    <h3>Twoja trasa</h3>
+                    <div id="route-description" style="font-size:1.05rem; margin-bottom:18px;"></div>
+                    <a id="open-gmaps-link" href="#" target="_blank" rel="noopener" style="display:inline-block; background:linear-gradient(90deg,#FFCB05 60%,#FFE066 100%); color:#3558A0; font-weight:700; font-size:1.08rem; border-radius:12px; padding:13px 22px; text-decoration:none; box-shadow:0 2px 8px rgba(53,88,160,0.10); letter-spacing:0.5px; margin-top:8px; transition:background 0.2s,transform 0.1s;">Otwórz trasę w Google Maps</a>
+                    <div id="route-challenges" style="margin-top:22px; font-size:1.01rem;"></div>
+                    <div id="save-route-tasks" style="margin-top:18px;">
+                      <input id="route-tasks-name" type="text" placeholder="Nazwa zestawu zadań" style="padding:6px 10px; border-radius:8px; border:1px solid #bbb; margin-right:8px;">
+                      <button id="save-route-tasks-btn" style="background:#3776c7; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-size:1em; cursor:pointer;">Zapisz zadania</button>
+                      <span id="save-route-tasks-msg" style="margin-left:10px; color:#3776c7; font-weight:bold;"></span>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="layer-controls">
                     <h3>Map Layers</h3>
                     <div class="form-group">
@@ -68,6 +134,21 @@
             <div id="map"></div>
             <button id="locate-btn" style="margin-top:10px;">Zlokalizuj mnie</button>
         </div>
+    </div>
+
+    <button id="openTasksBtn" class="tasks-btn">Zadania</button>
+    <div id="tasksModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" id="closeTasksModal">&times;</span>
+        <h2>Twoje zadania</h2>
+        <div style="margin-bottom:10px;">
+          <label for="taskset-select">Wybierz zestaw:</label>
+          <select id="taskset-select" style="margin-left:8px; margin-right:8px;"></select>
+          <button id="delete-taskset-btn" style="background:#e74c3c; color:#fff; border:none; border-radius:8px; padding:4px 12px; font-size:0.98em; cursor:pointer;">Usuń</button>
+        </div>
+        <ul id="tasksList"></ul>
+        <div id="reward" class="reward"></div>
+      </div>
     </div>
 
     <!-- Leaflet JS -->

@@ -100,6 +100,7 @@ class S2Utility {
 
     // Wyłączone dynamiczne aktualizowanie siatki
     updateS2CellLayers(map) {}
+
     toggleS2CellLayer(level, visible, map) {
         if (level === 14 && this.level14Layer) {
             if (visible) {
