@@ -29,29 +29,29 @@
 <body>
     <div class="container">
         <header>
-            <h1>Milicz County Pokémon GO Map</h1>
+            <h1>Milicz Pokémon GO Map</h1>
         </header>
         
         <div class="main-content">
             <div class="form-container">
-                <h2>Add New Point</h2>
+                <h2>Dodaj nowy punkt</h2>
                 <form id="point-form">
                     <div class="form-group">
                         <label for="coordinates">Koordynaty:</label>
                         <input type="text" id="coordinates" placeholder="51.51660034800902, 17.268122925543906" required>
                     </div>
                     <div class="form-group">
-                        <label for="point-type">Point Type:</label>
+                        <label for="point-type">Typ punktu:</label>
                         <select id="point-type" required>
                             <option value="PokéStop">PokéStop</option>
                             <option value="Gym">Gym</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="point-name">Point Name:</label>
+                        <label for="point-name">Nazwa punktu:</label>
                         <input type="text" id="point-name" required>
                     </div>
-                    <button type="submit" id="add-point-btn">Add Point</button>
+                    <button type="submit" id="add-point-btn">Dodaj punkt</button>
                 </form>
                 
                 <button id="open-locate-map-btn" style="margin-top:10px;">Otwórz mapkę do lokalizacji</button>
@@ -119,14 +119,14 @@
                 </div>
 
                 <div class="layer-controls">
-                    <h3>Map Layers</h3>
+                    <h3>Warstwy mapy</h3>
                     <div class="form-group">
                         <input type="checkbox" id="s2-level-14" checked>
-                        <label for="s2-level-14">S2 Level 14 Cells</label>
+                        <label for="s2-level-14">S2 Poziom 14</label>
                     </div>
                     <div class="form-group">
                         <input type="checkbox" id="s2-level-17" checked>
-                        <label for="s2-level-17">S2 Level 17 Cells</label>
+                        <label for="s2-level-17">S2 Poziom 17</label>
                     </div>
                 </div>
             </div>
