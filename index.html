@@ -76,6 +76,36 @@
                   <button id="download-pdf-btn">Pobierz mapę PDF</button>
                 </div>
                 <div id="points-list" style="display:none; margin-top:10px;"></div>
+                <!-- Modal for viewing/editing point info -->
+                <div id="point-info-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:3000; align-items:center; justify-content:center;">
+                  <div style="background:#fff; padding:20px; border-radius:10px; max-width:95vw; max-height:95vh; position:relative; min-width:320px;">
+                    <button id="close-point-info-btn" style="position:absolute; top:10px; right:10px;">Zamknij</button>
+                    <h3>Szczegóły punktu</h3>
+                    <form id="edit-point-form">
+                      <input type="hidden" id="edit-point-id">
+                      <div class="form-group">
+                        <label for="edit-point-name">Nazwa punktu:</label>
+                        <input type="text" id="edit-point-name" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-point-type">Typ punktu:</label>
+                        <select id="edit-point-type" required>
+                          <option value="PokéStop">PokéStop</option>
+                          <option value="Gym">Gym</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-point-lat">Szerokość (lat):</label>
+                        <input type="number" id="edit-point-lat" step="any" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-point-lng">Długość (lng):</label>
+                        <input type="number" id="edit-point-lng" step="any" required>
+                      </div>
+                      <button type="submit" id="save-edit-point-btn">Zapisz zmiany</button>
+                    </form>
+                  </div>
+                </div>
                 
                 <!-- Narzędzie do planowania trasy -->
                 <div class="form-container" id="route-planner-container" style="margin-top:24px;">

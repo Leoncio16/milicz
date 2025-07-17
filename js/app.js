@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     pointsListDiv.innerHTML = '<em>Brak punktów w bazie.</em>';
                 } else {
                     pointsListDiv.innerHTML = '<ul style="list-style:none;padding:0;">' +
-                        points.map(p => `<li style='margin-bottom:8px;'><b>${p.name}</b> (${p.type})<br><span style='font-size:90%;color:#555;'>${p.lat}, ${p.lng}</span></li>`).join('') +
+                        points.map(p => `<li style='margin-bottom:8px;'><b>${p.name}</b> (${p.type})<br><span style='font-size:90%;color:#555;'>${p.lat}, ${p.lng}</span><br><button class='show-point-info-btn' data-id='${p._id}'>Szczegóły/Edytuj</button></li>`).join('') +
                         '</ul>';
                 }
                 pointsListDiv.style.display = 'block';
@@ -237,6 +237,55 @@ document.addEventListener('DOMContentLoaded', () => {
             showPointsBtn.textContent = 'Pokaż listę punktów';
             pointsJsonActions.style.display = 'none';
         }
+    });
+
+    // --- INDIVIDUAL POINT INFO/EDIT MODAL LOGIC ---
+    const pointInfoModal = document.getElementById('point-info-modal');
+    const closePointInfoBtn = document.getElementById('close-point-info-btn');
+    const editPointForm = document.getElementById('edit-point-form');
+    let currentEditPointId = null;
+
+    // Delegate click for dynamic buttons
+    pointsListDiv.addEventListener('click', function(e) {
+        if (e.target.classList.contains('show-point-info-btn')) {
+            const pointId = e.target.getAttribute('data-id');
+            const point = pointsCache.find(p => p._id === pointId);
+            if (point) {
+                document.getElementById('edit-point-id').value = point._id;
+                document.getElementById('edit-point-name').value = point.name;
+                document.getElementById('edit-point-type').value = point.type;
+                document.getElementById('edit-point-lat').value = point.lat;
+                document.getElementById('edit-point-lng').value = point.lng;
+                pointInfoModal.style.display = 'flex';
+                currentEditPointId = point._id;
+            }
+        }
+    });
+    closePointInfoBtn.addEventListener('click', () => {
+        pointInfoModal.style.display = 'none';
+        currentEditPointId = null;
+    });
+    editPointForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('edit-point-id').value;
+        const name = document.getElementById('edit-point-name').value;
+        const type = document.getElementById('edit-point-type').value;
+        const lat = parseFloat(document.getElementById('edit-point-lat').value);
+        const lng = parseFloat(document.getElementById('edit-point-lng').value);
+        if (!isValidCoordinate(lat, lng)) {
+            alert('Podaj poprawne wartości współrzędnych.');
+            return;
+        }
+        db.collection('points').doc(id).update({
+            name, type, lat, lng
+        }).then(() => {
+            alert('Zaktualizowano punkt!');
+            pointInfoModal.style.display = 'none';
+            loadPointsFromServer();
+            if (pointsListDiv.style.display !== 'none') showPointsBtn.click(); // refresh list
+        }).catch(err => {
+            alert('Błąd podczas zapisu: ' + err.message);
+        });
     });
 
     downloadJsonBtn.addEventListener('click', () => {
