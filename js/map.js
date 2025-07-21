@@ -82,6 +82,15 @@ class PokeMap {
     addMarker(point) {
         const icon = point.type === 'PokéStop' ? this.pokestopIcon : this.gymIcon;
         
+        // Dodaj cień jako okrąg o promieniu 20m, jasnoszary, bez obramowania
+        const shadowCircle = L.circle([point.lat, point.lng], {
+            radius: 20, // metry
+            color: null,
+            fillColor: '#e0e0e0',
+            fillOpacity: 0.35,
+            weight: 0 // brak obramowania
+        }).addTo(this.map);
+
         const marker = L.marker([point.lat, point.lng], {
             icon: icon,
             title: point.name
@@ -95,6 +104,7 @@ class PokeMap {
         
         this.markers.push({
             marker: marker,
+            shadow: shadowCircle,
             data: point
         });
         
@@ -121,6 +131,9 @@ class PokeMap {
     clearMarkers() {
         this.markers.forEach(item => {
             this.map.removeLayer(item.marker);
+            if (item.shadow) {
+                this.map.removeLayer(item.shadow);
+            }
         });
         
         this.markers = [];
